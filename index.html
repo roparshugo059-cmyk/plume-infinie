@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Plume Infinie — Bibliothèque IA</title>
+<title>Plume Infinie — Lecteur & Créateur de Livres</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -30,8 +30,8 @@ transition:.3s;
 }
 
 header{
-padding:20px;
 text-align:center;
+padding:20px;
 font-family:"Playfair Display",serif;
 }
 
@@ -59,6 +59,14 @@ color:white;
 cursor:pointer;
 }
 
+input,select{
+width:100%;
+padding:10px;
+border-radius:10px;
+border:1px solid #ccc;
+margin-top:10px;
+}
+
 #reader{
 position:fixed;
 inset:0;
@@ -70,29 +78,24 @@ flex-direction:column;
 .reader-top{
 display:flex;
 justify-content:space-between;
+align-items:center;
 padding:15px 20px;
-font-size:14px;
 }
 
-.settings{
-display:flex;
-gap:10px;
-}
-
-.settings button{
-border:none;
+.reader-top button{
 background:none;
-cursor:pointer;
+border:none;
 font-size:18px;
+cursor:pointer;
 color:var(--text);
 }
 
 .reader-content{
 flex:1;
 overflow-y:auto;
-padding:40px 20px;
 display:flex;
 justify-content:center;
+padding:40px 20px;
 }
 
 #page{
@@ -102,14 +105,14 @@ font-size:18px;
 white-space:pre-wrap;
 }
 
-.reader-controls{
+.controls{
 display:flex;
 justify-content:center;
 gap:15px;
 padding:15px;
 }
 
-.reader-controls button{
+.controls button{
 padding:8px 18px;
 border:none;
 border-radius:20px;
@@ -129,14 +132,6 @@ height:100%;
 background:var(--accent);
 width:0%;
 }
-
-input, textarea, select{
-width:100%;
-padding:10px;
-border-radius:10px;
-border:1px solid #ccc;
-margin-top:10px;
-}
 </style>
 </head>
 
@@ -144,7 +139,7 @@ margin-top:10px;
 
 <header>
 <h1>Plume Infinie</h1>
-<p>Bibliothèque & Création de romans par IA</p>
+<p>Lire et créer des romans</p>
 </header>
 
 <section>
@@ -153,8 +148,7 @@ margin-top:10px;
 </section>
 
 <section>
-<h2>🤖 Concepteur de livre par IA</h2>
-
+<h2>🤖 Créateur de livre</h2>
 <input id="aiTitle" placeholder="Titre du livre">
 <select id="aiGenre">
 <option>Thriller psychologique</option>
@@ -171,11 +165,11 @@ margin-top:10px;
 
 <div class="reader-top">
 <span id="readerTitle"></span>
-<div class="settings">
+<div>
 <button onclick="toggleTheme()">🌙</button>
 <button onclick="changeFont(1)">A+</button>
 <button onclick="changeFont(-1)">A−</button>
-<span onclick="closeReader()" style="cursor:pointer">✕</span>
+<button onclick="closeReader()">✕</button>
 </div>
 </div>
 
@@ -183,44 +177,30 @@ margin-top:10px;
 <div id="page"></div>
 </div>
 
-<div class="reader-controls">
+<div class="controls">
 <button onclick="prevChapter()">◀ Chapitre</button>
 <button onclick="nextChapter()">Chapitre ▶</button>
 </div>
 </div>
 
 <script>
-let books = [
-{
-title:"Derrière les portes closes",
-author:"Plume Infinie",
-chapters:[
-{
-title:"Chapitre 1 — La maison parfaite",
-text:`Quand j’ai accepté ce travail, je pensais avoir trouvé une chance.
-La maison était trop propre. Trop silencieuse.
-Et surtout… trop parfaite.
-
-Madame Delcourt souriait toujours.
-Mais ses yeux ne souriaient jamais.`
-},
-{
-title:"Chapitre 2 — Les règles",
-text:`Il y avait des règles.
-Ne jamais entrer dans la chambre du fond.
-Ne jamais répondre au téléphone.
-Ne jamais poser de questions.
-
-J’ai signé sans lire.
-C’est là que tout a commencé.`
-}
-]
-}
-];
-
+let books=[];
 let currentBook=null;
 let currentChapter=0;
 let fontSize=18;
+
+const storyBlocks=[
+"Ce matin-là, quelque chose clochait. Je l’ai senti immédiatement.",
+"La maison semblait calme, trop calme pour être honnête.",
+"Je n’aurais jamais dû accepter ce travail.",
+"Chaque regard, chaque silence cachait une vérité.",
+"À cet instant précis, j’ai compris que j’étais en danger.",
+"Le passé revenait, lentement, mais violemment.",
+"Une porte s’est refermée derrière moi.",
+"Je n’étais plus seule.",
+"Tout ce que je croyais savoir était faux.",
+"La vérité était bien plus sombre que je ne l’imaginais."
+];
 
 function renderLibrary(){
 library.innerHTML="";
@@ -245,20 +225,22 @@ renderChapter();
 function renderChapter(){
 const c=currentBook.chapters[currentChapter];
 page.style.fontSize=fontSize+"px";
-page.innerHTML=`<h2>${c.title}</h2><p>${c.text.replace(/\n/g,"<br><br>")}</p>`;
+page.innerHTML=`<h2>${c.title}</h2><p>${c.text}</p>`;
 progress.style.width=((currentChapter+1)/currentBook.chapters.length)*100+"%";
 localStorage.setItem(currentBook.title,currentChapter);
 }
 
 function nextChapter(){
 if(currentChapter<currentBook.chapters.length-1){
-currentChapter++;renderChapter();
+currentChapter++;
+renderChapter();
 }
 }
 
 function prevChapter(){
 if(currentChapter>0){
-currentChapter--;renderChapter();
+currentChapter--;
+renderChapter();
 }
 }
 
@@ -269,33 +251,34 @@ fontSize=Math.min(26,Math.max(14,fontSize+v));
 renderChapter();
 }
 
-/* ===== CONCEPTEUR IA (LOGIQUE SIMULÉE) ===== */
 function generateBook(){
-const title=aiTitle.value||"Roman IA";
+const title=aiTitle.value||"Roman généré";
 const genre=aiGenre.value;
-const count=parseInt(aiChapters.value)||10;
+const count=parseInt(aiChapters.value)||15;
 
 let chapters=[];
 for(let i=1;i<=count;i++){
+let text="";
+for(let p=0;p<6;p++){
+const block=storyBlocks[(i+p)%storyBlocks.length];
+text+=block+"\n\n";
+}
+text+=`Ce chapitre ${i} marque un tournant dans ce ${genre.toLowerCase()}.`;
+
 chapters.push({
 title:`Chapitre ${i}`,
-text:`Ce chapitre appartient à un roman de genre ${genre}.
-
-Chaque mot a été généré pour créer une tension progressive.
-Rien n’est laissé au hasard.
-
-Plus vous avancez, plus la vérité se fissure.`
+text:text
 });
 }
 
 books.push({
 title:title,
-author:"Créé par l’IA",
+author:"Créé par le générateur narratif",
 chapters:chapters
 });
 
 renderLibrary();
-alert("📘 Livre généré et ajouté à la bibliothèque");
+alert("Livre créé avec succès");
 }
 
 renderLibrary();
