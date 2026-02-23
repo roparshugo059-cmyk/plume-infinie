@@ -2,164 +2,96 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Plume Infinie — Bibliothèque & Création IA</title>
+<title>Plume Infinie — Lire & Créer</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-:root{
---bg:#f7f7f5;
---dark:#0b1220;
---card:#ffffff;
---text:#1e293b;
---muted:#64748b;
---gold:#c7a14a;
---radius:18px;
-}
-
-*{margin:0;padding:0;box-sizing:border-box}
-
 body{
+margin:0;
 font-family:Inter,sans-serif;
-background:var(--bg);
-color:var(--text);
-line-height:1.7;
+background:#f7f7f5;
+color:#1e293b;
 }
 
 header{
-background:var(--dark);
-color:#fff;
-padding:24px 64px;
+background:#0b1220;
+color:white;
+padding:20px 50px;
 display:flex;
 justify-content:space-between;
-align-items:center;
 }
 
-header h1{
-font-family:"Playfair Display",serif;
-font-size:26px;
-letter-spacing:1px;
-}
+h1{font-family:"Playfair Display",serif}
 
-nav a{
-color:#fff;
-text-decoration:none;
-margin-left:28px;
-opacity:.85;
-}
-
-nav a:hover{opacity:1}
-
-.hero{
-padding:120px 20px;
-text-align:center;
-max-width:900px;
-margin:auto;
-}
-
-.hero h2{
-font-family:"Playfair Display",serif;
-font-size:50px;
-margin-bottom:24px;
-}
-
-.hero p{
-color:var(--muted);
-font-size:18px;
-margin-bottom:40px;
-}
-
-button{
-background:var(--gold);
-border:none;
-color:white;
-padding:16px 42px;
-border-radius:40px;
-font-size:15px;
-cursor:pointer;
-}
-
-button:hover{opacity:.9}
-
-section{
-padding:90px 64px;
-max-width:1300px;
-margin:auto;
-}
-
-section h3{
-font-family:"Playfair Display",serif;
-font-size:34px;
-margin-bottom:40px;
-}
+section{padding:60px}
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:32px;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:30px;
 }
 
-.card{
-background:var(--card);
-padding:28px;
-border-radius:var(--radius);
-box-shadow:0 10px 30px rgba(0,0,0,.05);
-transition:.3s;
+.book{
+background:white;
+border-radius:16px;
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+overflow:hidden;
 }
 
-.card:hover{transform:translateY(-6px)}
-
-.card h4{
-font-family:"Playfair Display",serif;
-margin-bottom:10px;
+.book img{
+width:100%;
+height:260px;
+object-fit:cover;
 }
 
-.card p{color:var(--muted);font-size:14px}
-
-.tag{
-display:inline-block;
-margin-top:12px;
-color:var(--gold);
-font-weight:600;
-font-size:13px;
+.book div{
+padding:20px;
 }
 
-.ai{
-background:var(--dark);
-color:white;
-border-radius:32px;
-padding:80px 40px;
-}
-
-.ai form{
-max-width:700px;
-margin:auto;
-display:grid;
-gap:20px;
-}
-
-.ai input,.ai select,.ai textarea{
-padding:14px;
-border-radius:12px;
+.book button{
+margin-top:10px;
+padding:10px 20px;
 border:none;
-font-size:14px;
+border-radius:20px;
+background:#c7a14a;
+color:white;
+cursor:pointer;
 }
 
-.ai textarea{min-height:120px}
-
-footer{
-text-align:center;
-padding:50px;
-color:var(--muted);
-font-size:14px;
+#reader{
+position:fixed;
+inset:0;
+background:#0b1220;
+color:white;
+display:none;
+flex-direction:column;
+overflow:auto;
+padding:40px;
 }
 
-@media(max-width:768px){
-header{flex-direction:column}
-nav{margin-top:16px}
-.hero h2{font-size:36px}
-section{padding:70px 24px}
+#reader img{
+width:100%;
+max-width:800px;
+margin:20px auto;
+display:block;
+border-radius:12px;
+}
+
+#reader p{
+max-width:800px;
+margin:auto;
+font-size:18px;
+line-height:1.8;
+}
+
+.close{
+position:fixed;
+top:20px;
+right:30px;
+font-size:22px;
+cursor:pointer;
 }
 </style>
 </head>
@@ -168,77 +100,86 @@ section{padding:70px 24px}
 
 <header>
 <h1>Plume Infinie</h1>
-<nav>
-<a href="#catalogue">Catalogue</a>
-<a href="#creation">Créer avec l’IA</a>
-<a href="#">Bibliothèque</a>
-<a href="#">Connexion</a>
-</nav>
+<nav>Bibliothèque • Création IA</nav>
 </header>
 
-<div class="hero">
-<h2>La bibliothèque où chaque histoire est possible</h2>
+<section>
+<h2>📚 Ma bibliothèque</h2>
+
+<div class="grid" id="library">
+
+<div class="book">
+<img src="images/cover-roman.jpg">
+<div>
+<h3>L’Ombre de Verre</h3>
+<p>Roman policier</p>
+<button onclick="readText()">Lire</button>
+</div>
+</div>
+
+<div class="book">
+<img src="images/cover-manga.jpg">
+<div>
+<h3>Chroniques d’Acier</h3>
+<p>Manga</p>
+<button onclick="readManga()">Lire</button>
+</div>
+</div>
+
+</div>
+</section>
+
+<section>
+<h2>🤖 Créer un livre avec l’IA</h2>
+<button onclick="createBook()">Générer un nouveau livre</button>
+</section>
+
+<!-- LECTEUR -->
+<div id="reader">
+<span class="close" onclick="closeReader()">✕ Fermer</span>
+<div id="content"></div>
+</div>
+
+<script>
+function readText(){
+document.getElementById("reader").style.display="flex";
+document.getElementById("content").innerHTML=`
 <p>
-Romans, mangas, BD, théâtre ou récits sur mesure.
-Lisez des œuvres originales ou créez un livre unique,
-jusqu’à <strong>1000 pages</strong>, écrit pour vous par une intelligence artificielle.
-</p>
-<button onclick="document.getElementById('creation').scrollIntoView()">Créer mon livre</button>
+Chapitre 1<br><br>
+La pluie battait les vitres quand l’inspecteur entra dans la pièce.
+Il savait que cette affaire ne ressemblerait à aucune autre...
+<br><br>
+Chapitre 2<br><br>
+Les mensonges s’empilaient comme des cadavres.
+</p>`;
+}
+
+function readManga(){
+document.getElementById("reader").style.display="flex";
+document.getElementById("content").innerHTML=`
+<img src="images/manga-1.jpg">
+<img src="images/manga-2.jpg">
+`;
+}
+
+function closeReader(){
+document.getElementById("reader").style.display="none";
+}
+
+function createBook(){
+const library=document.getElementById("library");
+library.innerHTML+=`
+<div class="book">
+<img src="images/cover-roman.jpg">
+<div>
+<h3>Livre IA personnalisé</h3>
+<p>Créé par l’IA</p>
+<button onclick="readText()">Lire</button>
 </div>
-
-<section id="catalogue">
-<h3>Catalogue original</h3>
-<div class="grid">
-<div class="card"><h4>L’Ombre de Verre</h4><p>Roman policier • 420 pages</p><span class="tag">Thriller</span></div>
-<div class="card"><h4>Le Rire du Néant</h4><p>Humour absurde • 180 pages</p><span class="tag">Comédie</span></div>
-<div class="card"><h4>Les Cités Suspendues</h4><p>Science-fiction • 760 pages</p><span class="tag">SF</span></div>
-<div class="card"><h4>Chroniques d’Acier</h4><p>Manga • Série longue</p><span class="tag">Aventure</span></div>
-<div class="card"><h4>Les Silences du Rideau</h4><p>Pièce de théâtre • 95 pages</p><span class="tag">Drame</span></div>
-<div class="card"><h4>Contes du Crépuscule</h4><p>Jeunesse • 60 pages</p><span class="tag">Fantaisie</span></div>
-</div>
-</section>
-
-<section id="creation" class="ai">
-<h3>Créer un livre avec l’IA</h3>
-<form>
-<select>
-<option>Genre</option>
-<option>Policier</option>
-<option>Humour</option>
-<option>Science-fiction</option>
-<option>Fantasy</option>
-<option>Théâtre</option>
-<option>BD / Manga</option>
-</select>
-
-<select>
-<option>Format</option>
-<option>Roman</option>
-<option>Nouvelle</option>
-<option>BD</option>
-<option>Manga</option>
-<option>Pièce de théâtre</option>
-</select>
-
-<select>
-<option>Longueur</option>
-<option>Moins de 50 pages</option>
-<option>100 – 300 pages</option>
-<option>300 – 600 pages</option>
-<option>600 – 1000 pages</option>
-</select>
-
-<input type="text" placeholder="Style d’écriture (ex: sombre, poétique, absurde…)">
-
-<textarea placeholder="Décrivez votre idée, vos personnages ou votre univers"></textarea>
-
-<button type="submit">Générer mon livre</button>
-</form>
-</section>
-
-<footer>
-© 2026 — Plume Infinie • Plateforme éditoriale & IA littéraire
-</footer>
+</div>`;
+alert("Livre IA ajouté à votre bibliothèque");
+}
+</script>
 
 </body>
 </html>
