@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Plume Infinie — Lire & Créer</title>
+<title>Plume Infinie — Bibliothèque numérique</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -21,38 +21,30 @@ color:white;
 padding:20px 50px;
 display:flex;
 justify-content:space-between;
+align-items:center;
 }
 
-h1{font-family:"Playfair Display",serif}
+h1,h2,h3{
+font-family:"Playfair Display",serif;
+}
 
-section{padding:60px}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:30px;
+section{
+padding:60px;
+max-width:1000px;
+margin:auto;
 }
 
 .book{
 background:white;
-border-radius:16px;
+padding:24px;
+border-radius:14px;
 box-shadow:0 8px 20px rgba(0,0,0,.08);
-overflow:hidden;
-}
-
-.book img{
-width:100%;
-height:260px;
-object-fit:cover;
-}
-
-.book div{
-padding:20px;
+margin-bottom:20px;
 }
 
 .book button{
-margin-top:10px;
-padding:10px 20px;
+margin-top:12px;
+padding:10px 22px;
 border:none;
 border-radius:20px;
 background:#c7a14a;
@@ -67,31 +59,38 @@ background:#0b1220;
 color:white;
 display:none;
 flex-direction:column;
-overflow:auto;
 padding:40px;
 }
 
-#reader img{
-width:100%;
-max-width:800px;
-margin:20px auto;
-display:block;
-border-radius:12px;
-}
-
-#reader p{
+#page{
 max-width:800px;
 margin:auto;
 font-size:18px;
 line-height:1.8;
 }
 
+.controls{
+display:flex;
+justify-content:center;
+gap:20px;
+margin-top:30px;
+}
+
+.controls button{
+padding:10px 24px;
+border:none;
+border-radius:20px;
+background:#c7a14a;
+color:white;
+cursor:pointer;
+}
+
 .close{
-position:fixed;
+position:absolute;
 top:20px;
 right:30px;
-font-size:22px;
 cursor:pointer;
+font-size:20px;
 }
 </style>
 </head>
@@ -100,85 +99,109 @@ cursor:pointer;
 
 <header>
 <h1>Plume Infinie</h1>
-<nav>Bibliothèque • Création IA</nav>
+<span>Bibliothèque & Création IA</span>
 </header>
 
 <section>
-<h2>📚 Ma bibliothèque</h2>
-
-<div class="grid" id="library">
-
-<div class="book">
-<img src="images/cover-roman.jpg">
-<div>
-<h3>L’Ombre de Verre</h3>
-<p>Roman policier</p>
-<button onclick="readText()">Lire</button>
-</div>
-</div>
-
-<div class="book">
-<img src="images/cover-manga.jpg">
-<div>
-<h3>Chroniques d’Acier</h3>
-<p>Manga</p>
-<button onclick="readManga()">Lire</button>
-</div>
-</div>
-
-</div>
+<h2>📚 Bibliothèque</h2>
+<div id="library"></div>
 </section>
 
 <section>
 <h2>🤖 Créer un livre avec l’IA</h2>
-<button onclick="createBook()">Générer un nouveau livre</button>
+<button onclick="createBook()">Créer un nouveau roman</button>
 </section>
 
-<!-- LECTEUR -->
 <div id="reader">
 <span class="close" onclick="closeReader()">✕ Fermer</span>
-<div id="content"></div>
+<h2 id="readerTitle"></h2>
+<div id="page"></div>
+
+<div class="controls">
+<button onclick="prevPage()">Page précédente</button>
+<button onclick="nextPage()">Page suivante</button>
+</div>
 </div>
 
 <script>
-function readText(){
-document.getElementById("reader").style.display="flex";
-document.getElementById("content").innerHTML=`
-<p>
-Chapitre 1<br><br>
-La pluie battait les vitres quand l’inspecteur entra dans la pièce.
-Il savait que cette affaire ne ressemblerait à aucune autre...
-<br><br>
-Chapitre 2<br><br>
-Les mensonges s’empilaient comme des cadavres.
-</p>`;
+const books = [
+{
+title: "L’Ombre de Verre",
+author: "Plume Infinie",
+pages: [
+"Chapitre 1\n\nLa pluie battait les vitres du commissariat. L’inspecteur Morel savait que cette nuit marquerait un tournant.",
+"Chapitre 2\n\nLes témoignages s’enchaînaient, tous contradictoires. Quelqu’un mentait.",
+"Chapitre 3\n\nLe silence du suspect était plus lourd que n’importe quel aveu.",
+"Chapitre 4\n\nÀ l’aube, la vérité commença à émerger, fragile et dangereuse."
+]
+}
+];
+
+let currentBook = null;
+let currentPage = 0;
+
+function renderLibrary(){
+const lib = document.getElementById("library");
+lib.innerHTML = "";
+books.forEach((book, index) => {
+lib.innerHTML += `
+<div class="book">
+<h3>${book.title}</h3>
+<p>${book.author}</p>
+<button onclick="openBook(${index})">Lire</button>
+</div>`;
+});
 }
 
-function readManga(){
-document.getElementById("reader").style.display="flex";
-document.getElementById("content").innerHTML=`
-<img src="images/manga-1.jpg">
-<img src="images/manga-2.jpg">
-`;
+function openBook(index){
+currentBook = books[index];
+currentPage = 0;
+document.getElementById("readerTitle").innerText = currentBook.title;
+document.getElementById("reader").style.display = "flex";
+renderPage();
+}
+
+function renderPage(){
+document.getElementById("page").innerText =
+currentBook.pages[currentPage] +
+"\n\nPage " + (currentPage + 1) + " / " + currentBook.pages.length;
+}
+
+function nextPage(){
+if(currentPage < currentBook.pages.length - 1){
+currentPage++;
+renderPage();
+}
+}
+
+function prevPage(){
+if(currentPage > 0){
+currentPage--;
+renderPage();
+}
 }
 
 function closeReader(){
-document.getElementById("reader").style.display="none";
+document.getElementById("reader").style.display = "none";
 }
 
 function createBook(){
-const library=document.getElementById("library");
-library.innerHTML+=`
-<div class="book">
-<img src="images/cover-roman.jpg">
-<div>
-<h3>Livre IA personnalisé</h3>
-<p>Créé par l’IA</p>
-<button onclick="readText()">Lire</button>
-</div>
-</div>`;
-alert("Livre IA ajouté à votre bibliothèque");
+const newBook = {
+title: "Roman IA personnalisé",
+author: "Créé par l’IA",
+pages: [
+"Chapitre 1\n\nCe livre est né d’une idée, façonnée par une intelligence artificielle.",
+"Chapitre 2\n\nChaque page se construit pour offrir une expérience unique.",
+"Chapitre 3\n\nL’histoire avance, fidèle aux choix du lecteur.",
+"Chapitre 4\n\nLa fin n’est jamais vraiment une fin."
+]
+};
+books.push(newBook);
+renderLibrary();
+alert("Le livre a été ajouté à votre bibliothèque");
 }
+
+renderLibrary();
 </script>
 
 </body>
